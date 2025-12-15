@@ -3,9 +3,9 @@ const mysql = require('mysql2/promise');
 async function setup() {
     try {
         const connection = await mysql.createConnection({
-            host: '127.0.0.1', // Force IPv4
-            user: 'root',
-            password: '', // Default XAMPP password
+            host: '127.0.0.1:3306', // Force IPv4
+            user: 'u641431622_aniveraweb',
+            password: 'Anivera@321#', // Default XAMPP password
         });
 
         console.log('Connected to MySQL server at 127.0.0.1');
