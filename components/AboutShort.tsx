@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const AboutShort = () => {
   return (
@@ -8,9 +9,11 @@ const AboutShort = () => {
           {/* Visual Column */}
           <div className="order-2 lg:order-1 relative animate-float">
             <div className="absolute inset-0 bg-secondary/20 rounded-full blur-3xl transform scale-75"></div>
-            <img
+            <Image
               src="/about-vision.png"
               alt="Digital Vision"
+              width={600}
+              height={400}
               className="relative z-10 w-full rounded-2xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-700"
             />
           </div>
