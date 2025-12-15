@@ -10,30 +10,33 @@ RewriteCond %{REQUEST_URI} ^/\_next/image
 RewriteCond %{QUERY_STRING} url=([^&]+)
 RewriteRule ^.\*$ /out%1? [L,R=301]
 
-# Allow access to out/ directory and its contents
+# Remove trailing slashes (except for root)
+
+# /about/ -> /about
+
+RewriteCond %{REQUEST_URI} !^/$
+  RewriteCond %{REQUEST_URI} (.+)/$
+RewriteRule ^ %1 [L,R=301]
+
+# Allow direct access to out/ directory files
 
 RewriteCond %{REQUEST_URI} ^/out/
 RewriteRule ^ - [L]
 
-# Serve files from out/ directory - Files first
+# Serve static files directly from out/
 
 RewriteCond %{REQUEST_URI} !^/out/
 RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f
 RewriteRule ^(.\*)$ /out/$1 [L]
 
-# Handle directories - serve index.html if exists
+# Handle routes: /about -> /out/about.html
 
 RewriteCond %{REQUEST_URI} !^/out/
-RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}/index.html -f
-RewriteRule ^(.\*)$ /out/$1/index.html [L]
+RewriteCond %{REQUEST_URI} !\.(html|css|js|png|jpg|jpeg|gif|ico|svg|webp|txt|xml|pdf)$
+  RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}.html -f
+  RewriteRule ^(.*)$ /out/$1.html [L]
 
-# Handle .html extension - for routes like /about -> /about.html
-
-RewriteCond %{REQUEST_URI} !^/out/
-RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}.html -f
-RewriteRule ^(.\*)$ /out/$1.html [L]
-
-# Fallback to homepage for client-side routing
+# Fallback to index.html for client-side routing
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -49,19 +52,26 @@ AddType image/svg+xml .svg
 AddType image/png .png
 AddType image/jpeg .jpg .jpeg
 AddType image/webp .webp
+AddType application/pdf .pdf
 
-# Allow directory access for specific files
+# Allow all access to these file types
 
-<FilesMatch "\.(html|js|css|png|jpg|jpeg|gif|ico|svg|webp|txt|xml)$">
+<FilesMatch "\.(html|js|css|png|jpg|jpeg|gif|ico|svg|webp|txt|xml|pdf)$">
 Require all granted
 </FilesMatch>
 
-# Disable directory listing but allow access
+# Prevent directory browsing but allow file access
 
 Options -Indexes +FollowSymLinks
 
-# Cache control
+# Cache control for performance
 
 <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp)$">
 Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+# HTML files - no cache for fresh content
+
+<FilesMatch "\.(html)$">
+Header set Cache-Control "no-cache, must-revalidate"
 </FilesMatch>
