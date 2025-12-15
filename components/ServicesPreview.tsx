@@ -1,5 +1,6 @@
 import { Cloud, Building2, Cpu, Settings } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const ServicesPreview = () => {
   const services = [
@@ -8,24 +9,28 @@ const ServicesPreview = () => {
       description:
         "Scalable, multi-tenant cloud architectures designed for growth and performance.",
       icon: Cloud,
+      image: "/services/saas-engineering-new.png",
     },
     {
       title: "Custom Software",
       description:
         "Robust custom software tailored to optimize complex business workflows.",
       icon: Settings,
+      image: "/services/custom-software-new.png",
     },
     {
       title: "Enterprise Systems",
       description:
         "Modernize legacy systems to drive efficiency and innovation.",
       icon: Building2,
+      image: "/services/software-dev.png",
     },
     {
       title: "Automation & Integrations",
       description:
         "Streamline operations with intelligent bots and seamless API connectivity.",
       icon: Cpu,
+      image: "/services/cloud-devops.png",
     },
   ];
 
@@ -47,21 +52,33 @@ const ServicesPreview = () => {
             <Link
               href="/services"
               key={index}
-              className="group relative p-8 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+              className="group relative flex flex-col bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-500 shadow-inner">
-                  <service.icon className="w-8 h-8 text-primary group-hover:text-secondary transition-colors duration-500" />
+              {/* Image Heading */}
+              <div className="relative w-full h-48 overflow-hidden bg-gray-100">
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+                <div className="absolute bottom-4 left-4 z-10">
+                  <div className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-lg flex items-center justify-center shadow-lg">
+                    <service.icon className="w-5 h-5 text-primary" />
+                  </div>
                 </div>
+              </div>
+
+              <div className="p-6 flex-1 flex flex-col">
                 <h3 className="text-xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors duration-300 font-heading">
                   {service.title}
                 </h3>
-                <p className="text-foreground-light leading-relaxed text-sm mb-6">
+                <p className="text-foreground-light leading-relaxed text-sm mb-6 flex-1">
                   {service.description}
                 </p>
-                <span className="text-secondary text-sm font-bold flex items-center gap-2 transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="text-secondary text-sm font-bold flex items-center gap-2 transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">
                   Explore Solution <span className="text-lg">→</span>
                 </span>
               </div>
