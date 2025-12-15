@@ -62,11 +62,7 @@ export const metadata: Metadata = {
     description: "Enterprise grade software solutions.",
     creator: "@aniveratech",
   },
-  icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/apple-touch-icon.png",
-  },
+
   robots: {
     index: true,
     follow: true,
@@ -104,20 +100,20 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              "name": "Anivera Technologies",
-              "url": "https://aniveratech.com",
-              "logo": "https://aniveratech.com/logo.png",
-              "sameAs": [
+              name: "Anivera Technologies",
+              url: "https://aniveratech.com",
+              logo: "https://aniveratech.com/logo.png",
+              sameAs: [
                 "https://twitter.com/aniveratech",
-                "https://www.linkedin.com/company/anivera-tech"
+                "https://www.linkedin.com/company/anivera-tech",
               ],
-              "contactPoint": {
+              contactPoint: {
                 "@type": "ContactPoint",
-                "telephone": "+1-555-123-4567",
-                "contactType": "customer service",
-                "email": "info@aniveratech.com"
-              }
-            })
+                telephone: "+1-555-123-4567",
+                contactType: "customer service",
+                email: "info@aniveratech.com",
+              },
+            }),
           }}
         />
         <SmoothScrolling>{children}</SmoothScrolling>
