@@ -1,48 +1,37 @@
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
+RewriteEngine On
+RewriteBase /
 
-# Handle Next.js Image Optimization API (for static export)
-
-# Redirect /\_next/image?url=/services/file.png to /out/services/file.png
+# Handle Next.js Image Optimization API
 
 RewriteCond %{REQUEST_URI} ^/\_next/image
 RewriteCond %{QUERY_STRING} url=([^&]+)
 RewriteRule ^.\*$ /out%1? [L,R=301]
 
-# Remove trailing slashes (except for root)
-
-# /about/ -> /about
-
-RewriteCond %{REQUEST_URI} !^/$
-  RewriteCond %{REQUEST_URI} (.+)/$
-RewriteRule ^ %1 [L,R=301]
-
-# Allow direct access to out/ directory files
-
-RewriteCond %{REQUEST_URI} ^/out/
-RewriteRule ^ - [L]
-
-# Serve static files directly from out/
+# Serve static files from out/
 
 RewriteCond %{REQUEST_URI} !^/out/
 RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f
 RewriteRule ^(.\*)$ /out/$1 [L]
 
-# Handle routes: /about -> /out/about.html
+# Handle /about/ -> /out/about.html (with trailing slash)
+
+RewriteCond %{REQUEST_URI} ^/([^/]+)/$
+RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
+RewriteRule ^([^/]+)/$ /out/$1.html [L]
+
+# Handle /about -> /out/about.html (without trailing slash)
 
 RewriteCond %{REQUEST_URI} !^/out/
 RewriteCond %{REQUEST_URI} !\.(html|css|js|png|jpg|jpeg|gif|ico|svg|webp|txt|xml|pdf)$
-  RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}.html -f
-  RewriteRule ^(.*)$ /out/$1.html [L]
+RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}.html -f
+RewriteRule ^(.*)$ /out/$1.html [L]
 
-# Fallback to index.html for client-side routing
+# Fallback to index.html
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/out/
-RewriteRule ^(.\*)$ /out/index.html [L,QSA]
-</IfModule>
+RewriteRule ^(.\*)$ /out/index.html [L]
 
 # MIME Types
 
@@ -52,26 +41,17 @@ AddType image/svg+xml .svg
 AddType image/png .png
 AddType image/jpeg .jpg .jpeg
 AddType image/webp .webp
-AddType application/pdf .pdf
 
-# Allow all access to these file types
+# Allow access to all files
 
-<FilesMatch "\.(html|js|css|png|jpg|jpeg|gif|ico|svg|webp|txt|xml|pdf)$">
+<FilesMatch ".\*">
 Require all granted
 </FilesMatch>
 
-# Prevent directory browsing but allow file access
-
 Options -Indexes +FollowSymLinks
 
-# Cache control for performance
+# Cache
 
 <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp)$">
 Header set Cache-Control "max-age=31536000, public"
-</FilesMatch>
-
-# HTML files - no cache for fresh content
-
-<FilesMatch "\.(html)$">
-Header set Cache-Control "no-cache, must-revalidate"
 </FilesMatch>
