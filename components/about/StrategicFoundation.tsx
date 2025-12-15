@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, type Variants, type Transition } from "framer-motion";
 import { Target, Compass, Flag } from "lucide-react";
 import { ScrollReveal } from "../ui/ScrollReveal";
@@ -61,10 +62,13 @@ const StrategicFoundation = () => {
                     className="relative h-[440px] min-h-[440px] w-full rounded-[30px] overflow-hidden bg-white"
                     style={{ isolation: "isolate" }}
                   >
-                    <img
+                    <Image
                       src="/strategic-foundation.png"
                       alt="Strategic Foundation"
-                      className="absolute inset-0 w-full h-full object-cover"
+                      fill
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                   </div>

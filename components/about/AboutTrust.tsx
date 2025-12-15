@@ -2,6 +2,7 @@
 
 import { ScrollReveal } from "../ui/ScrollReveal";
 import { ShieldCheck, Lock, Fingerprint, Server } from "lucide-react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 const AboutTrust = () => {
@@ -84,10 +85,12 @@ const AboutTrust = () => {
 
                 {/* Main Image */}
                 <div className="absolute inset-8 rounded-full overflow-hidden border-2 border-blue-400/50 shadow-[0_0_50px_rgba(59,130,246,0.3)] bg-black/50 backdrop-blur-sm">
-                  <img
+                  <Image
                     src="/trust-security.png"
                     alt="Security Core"
-                    className="absolute inset-0 w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover hover:scale-110 transition-transform duration-700"
                   />
                 </div>
 
