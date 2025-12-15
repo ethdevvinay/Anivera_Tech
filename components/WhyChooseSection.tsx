@@ -37,11 +37,9 @@ const WhyChooseSection = () => {
             <div className="absolute bottom-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
 
             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform hover:rotate-1 transition-transform duration-500">
-              <Image
+              <img
                 src="/why-choose-metrics.png"
                 alt="Growth Metrics"
-                width={600}
-                height={500}
                 className="w-full h-auto object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">

@@ -1,5 +1,5 @@
 import { Handshake, Heart, MessageSquare, Target } from "lucide-react";
-import Image from "next/image";
+// import Image from "next/image";
 
 const ClientPhilosophy = () => {
   const philosophyPoints = [
@@ -73,11 +73,9 @@ const ClientPhilosophy = () => {
           {/* Right: Visual */}
           <div className="relative animate-slide-in-right delay-200">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-              <Image
+              <img
                 src="/client-philosophy.png"
                 alt="Strategic Partnership"
-                width={600}
-                height={500}
                 className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
               />
               {/* Glass Card Overlay */}
