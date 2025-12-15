@@ -2,19 +2,39 @@
   RewriteEngine On
   RewriteBase /
 
-  # Serve files from out/ directory
-  RewriteCond %{REQUEST_URI} !^/out/
-  RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f [OR]
-  RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -d
-  RewriteRule ^(.*)$ /out/$1 [L]
+# Allow access to out/ directory and its contents
 
-  # If still not found, try index.html from out/
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ /out/index.html [L]
+RewriteCond %{REQUEST_URI} ^/out/
+RewriteRule ^ - [L]
+
+# Serve files from out/ directory - Files first
+
+RewriteCond %{REQUEST_URI} !^/out/
+RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f
+RewriteRule ^(.\*)$ /out/$1 [L]
+
+# Handle directories - serve index.html if exists
+
+RewriteCond %{REQUEST_URI} !^/out/
+RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}/index.html -f
+RewriteRule ^(.\*)$ /out/$1/index.html [L]
+
+# Handle .html extension - for routes like /about -> /about.html
+
+RewriteCond %{REQUEST_URI} !^/out/
+RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}.html -f
+RewriteRule ^(.\*)$ /out/$1.html [L]
+
+# Fallback to homepage for client-side routing
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/out/
+RewriteRule ^(.\*)$ /out/index.html [L,QSA]
 </IfModule>
 
 # MIME Types
+
 AddType application/javascript .js
 AddType text/css .css
 AddType image/svg+xml .svg
@@ -22,10 +42,18 @@ AddType image/png .png
 AddType image/jpeg .jpg .jpeg
 AddType image/webp .webp
 
-# Disable directory listing
-Options -Indexes
+# Allow directory access for specific files
+
+<FilesMatch "\.(html|js|css|png|jpg|jpeg|gif|ico|svg|webp|txt|xml)$">
+Require all granted
+</FilesMatch>
+
+# Disable directory listing but allow access
+
+Options -Indexes +FollowSymLinks
 
 # Cache control
+
 <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp)$">
-  Header set Cache-Control "max-age=31536000, public"
+Header set Cache-Control "max-age=31536000, public"
 </FilesMatch>
