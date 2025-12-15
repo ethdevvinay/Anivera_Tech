@@ -42,15 +42,20 @@ const CustomCursor = () => {
 
   return (
     <motion.div
-      className={`fixed top-0 left-0 w-8 h-8 rounded-full border-2 border-secondary pointer-events-none z-[9999] mix-blend-difference hidden md:block`}
+      className={`fixed top-0 left-0 w-8 h-8 rounded-full border-2 pointer-events-none z-[9999] mix-blend-difference hidden md:block`}
       style={{
         translateX: cursorXSpring,
         translateY: cursorYSpring,
+        borderColor: isHovered ? "#3B82F6" : "#14B8A6", // Blue when hovered, Teal default
       }}
       animate={{
         scale: isHovered ? 2.5 : 1,
-        backgroundColor: isHovered ? "rgba(31, 182, 166, 0.2)" : "transparent",
-        borderColor: isHovered ? "transparent" : "#1FB6A6",
+        backgroundColor: isHovered
+          ? "rgba(59, 130, 246, 0.2)" // Blue glow on hover
+          : "transparent",
+        boxShadow: isHovered
+          ? "0 0 20px rgba(59, 130, 246, 0.5)" // Blue shadow on hover
+          : "0 0 10px rgba(20, 184, 166, 0.3)", // Teal shadow default
       }}
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
     >
@@ -60,7 +65,7 @@ const CustomCursor = () => {
           animate={{ opacity: 1 }}
           className="w-full h-full flex items-center justify-center"
         >
-          <div className="w-1 h-1 bg-secondary rounded-full"></div>
+          <div className="w-2 h-2 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50"></div>
         </motion.div>
       )}
     </motion.div>
