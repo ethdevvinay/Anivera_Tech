@@ -2,6 +2,14 @@
   RewriteEngine On
   RewriteBase /
 
+# Handle Next.js Image Optimization API (for static export)
+
+# Redirect /\_next/image?url=/services/file.png to /out/services/file.png
+
+RewriteCond %{REQUEST_URI} ^/\_next/image
+RewriteCond %{QUERY_STRING} url=([^&]+)
+RewriteRule ^.\*$ /out%1? [L,R=301]
+
 # Allow access to out/ directory and its contents
 
 RewriteCond %{REQUEST_URI} ^/out/
