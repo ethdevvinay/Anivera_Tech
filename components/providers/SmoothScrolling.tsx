@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactLenis } from "@studio-freight/react-lenis";
+import { ReactLenis } from "lenis/react";
 import CustomCursor from "@/components/ui/CustomCursor";
 import AnimatedBackground from "@/components/ui/AnimatedBackground";
 
