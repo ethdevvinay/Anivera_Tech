@@ -6,13 +6,43 @@ const LeadGenSection = () => {
     "idle" | "submitting" | "success" | "error"
   >("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    // Simulate form submission
-    setTimeout(() => {
-      setStatus("success");
-    }, 1500);
+
+    const form = e.target as HTMLFormElement;
+    const formData = {
+      name: (form.elements.namedItem("name") as HTMLInputElement).value,
+      email: (form.elements.namedItem("email") as HTMLInputElement).value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement)
+        .value,
+    };
+
+    try {
+      const response = await fetch("/contact.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: formData.name.split(" ")[0],
+          lastName: formData.name.split(" ").slice(1).join(" ") || "",
+          email: formData.email,
+          projectType: "General Inquiry",
+          message: `Phone: ${formData.phone}\n\n${formData.message}`,
+        }),
+      });
+
+      if (response.ok) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setStatus("error");
+    }
   };
 
   return (
