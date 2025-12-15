@@ -1,39 +1,41 @@
 RewriteEngine On
-RewriteBase /
 
-# Handle Next.js Image Optimization API
+# CRITICAL: Stop if already in /out/ folder (prevents redirect loop)
 
-RewriteCond %{REQUEST_URI} ^/\_next/image
-RewriteCond %{QUERY_STRING} url=([^&]+)
-RewriteRule ^.\*$ /out%1? [L,R=301]
+RewriteCond %{REQUEST_URI} ^/out/
+RewriteRule .\* - [L]
 
-# Serve static files from out/
+# Rule 1: Direct files - serve from /out/
 
-RewriteCond %{REQUEST_URI} !^/out/
+# Example: /logo.png -> /out/logo.png
+
 RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f
 RewriteRule ^(.\*)$ /out/$1 [L]
 
-# Handle /about/ -> /out/about.html (with trailing slash)
+# Rule 2: Routes with trailing slash - /about/ -> /out/about.html
 
-RewriteCond %{REQUEST_URI} ^/([^/]+)/$
+RewriteCond %{REQUEST*URI} ^/([a-zA-Z0-9*-]+)/$
 RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
-RewriteRule ^([^/]+)/$ /out/$1.html [L]
+RewriteRule ^([a-zA-Z0-9_-]+)/$ /out/$1.html [L]
 
-# Handle /about -> /out/about.html (without trailing slash)
+# Rule 3: Routes without trailing slash - /about -> /out/about.html
 
-RewriteCond %{REQUEST_URI} !^/out/
-RewriteCond %{REQUEST_URI} !\.(html|css|js|png|jpg|jpeg|gif|ico|svg|webp|txt|xml|pdf)$
-RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI}.html -f
-RewriteRule ^(.*)$ /out/$1.html [L]
+RewriteCond %{REQUEST*URI} ^/([a-zA-Z0-9*-]+)$
+RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
+RewriteRule ^([a-zA-Z0-9_-]+)$ /out/$1.html [L]
 
-# Fallback to index.html
+# Rule 4: Root homepage - / -> /out/index.html
+
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /out/index.html [L]
+
+# Rule 5: Everything else -> /out/index.html (for 404s)
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/out/
-RewriteRule ^(.\*)$ /out/index.html [L]
+RewriteRule ^.\*$ /out/index.html [L]
 
-# MIME Types
+# File type declarations
 
 AddType application/javascript .js
 AddType text/css .css
@@ -41,17 +43,26 @@ AddType image/svg+xml .svg
 AddType image/png .png
 AddType image/jpeg .jpg .jpeg
 AddType image/webp .webp
+AddType text/html .html
 
-# Allow access to all files
+# Access permissions - Allow everything
 
 <FilesMatch ".\*">
 Require all granted
 </FilesMatch>
 
-Options -Indexes +FollowSymLinks
+# Disable directory browsing
 
-# Cache
+Options -Indexes
 
-<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp)$">
-Header set Cache-Control "max-age=31536000, public"
+# Performance - Cache static files
+
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2)$">
+Header set Cache-Control "max-age=31536000, public, immutable"
+</FilesMatch>
+
+# No cache for HTML
+
+<FilesMatch "\.(html)$">
+Header set Cache-Control "no-cache, no-store, must-revalidate"
 </FilesMatch>
