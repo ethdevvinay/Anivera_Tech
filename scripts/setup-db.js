@@ -3,17 +3,18 @@ const mysql = require('mysql2/promise');
 async function setup() {
     try {
         const connection = await mysql.createConnection({
-            host: '127.0.0.1:3306', // Force IPv4
+            host: '127.0.0.1', // Force IPv4
+            port: 3306,
             user: 'u641431622_aniveraweb',
             password: 'Anivera@321#', // Default XAMPP password
         });
 
         console.log('Connected to MySQL server at 127.0.0.1');
 
-        await connection.query('CREATE DATABASE IF NOT EXISTS anivera_db');
-        console.log('Database anivera_db ensure created.');
+        await connection.query('CREATE DATABASE IF NOT EXISTS u641431622_aniveraweb');
+        console.log('Database u641431622_aniveraweb ensure created.');
 
-        await connection.query('USE anivera_db');
+        await connection.query('USE u641431622_aniveraweb');
 
         await connection.query(`
       CREATE TABLE IF NOT EXISTS contact_submissions (
