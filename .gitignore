@@ -15,7 +15,7 @@
 
 # next.js
 /.next/
-/out/
+# /out/  # Commented to allow static export for Hostinger
 
 # production
 /build

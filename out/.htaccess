@@ -1,0 +1,33 @@
+# Handle static files efficiently
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Allow access to _next directory (Fixes 500 error on JS/CSS)
+  RewriteRule ^_next/ - [L]
+
+  # Redirect HTML file requests to clean URLs
+  RewriteCond %{THE_REQUEST} \s/([^.]+)\.html [NC]
+  RewriteRule ^ /%1 [NE,L,R=301]
+
+  # Internal rewrite for clean URLs (serve .html without showing extension)
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.*)$ $1.html [L]
+
+  # Custom 404 Page (Must point to explicit 404.html)
+  ErrorDocument 404 /404.html
+</IfModule>
+
+# Fix MIME Types
+AddType application/javascript .js
+AddType text/css .css
+AddType image/svg+xml .svg
+
+# Disable directory listing
+Options -Indexes
+
+# Set Permissions (Implicitly handles 500 errors in some environments)
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg)$">
+    Require all granted
+</FilesMatch>
