@@ -1,0 +1,21 @@
+# .htaccess for Hostinger root (public_html/)
+# This redirects everything to the out/ folder
+
+RewriteEngine On
+RewriteBase /
+
+# If already in /out/, don't redirect
+RewriteCond %{REQUEST_URI} ^/out/
+RewriteRule ^ - [L]
+
+# Redirect everything else to /out/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /out/$1 [L]
+
+# Allow all files
+<FilesMatch ".*">
+  Require all granted
+</FilesMatch>
+
+Options -Indexes

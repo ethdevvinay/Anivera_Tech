@@ -1,68 +1,51 @@
 RewriteEngine On
 
-# CRITICAL: Stop if already in /out/ folder (prevents redirect loop)
+# Rule 1: Serve static files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
 
-RewriteCond %{REQUEST_URI} ^/out/
-RewriteRule .\* - [L]
+# Rule 2: Routes with trailing slash -> .html
+# /about/ -> /about.html
+RewriteCond %{REQUEST_URI} ^/([a-zA-Z0-9_-]+)/$
+RewriteCond %{DOCUMENT_ROOT}/%1.html -f
+RewriteRule ^([a-zA-Z0-9_-]+)/$ /$1.html [L]
 
-# Rule 1: Direct files - serve from /out/
+# Rule 3: Routes without trailing slash -> .html
+# /about -> /about.html
+RewriteCond %{REQUEST_URI} ^/([a-zA-Z0-9_-]+)$
+RewriteCond %{DOCUMENT_ROOT}/%1.html -f
+RewriteRule ^([a-zA-Z0-9_-]+)$ /$1.html [L]
 
-# Example: /logo.png -> /out/logo.png
-
-RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f
-RewriteRule ^(.\*)$ /out/$1 [L]
-
-# Rule 2: Routes with trailing slash - /about/ -> /out/about.html
-
-RewriteCond %{REQUEST*URI} ^/([a-zA-Z0-9*-]+)/$
-RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
-RewriteRule ^([a-zA-Z0-9_-]+)/$ /out/$1.html [L]
-
-# Rule 3: Routes without trailing slash - /about -> /out/about.html
-
-RewriteCond %{REQUEST*URI} ^/([a-zA-Z0-9*-]+)$
-RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
-RewriteRule ^([a-zA-Z0-9_-]+)$ /out/$1.html [L]
-
-# Rule 4: Root homepage - / -> /out/index.html
-
+# Rule 4: Homepage
 RewriteCond %{REQUEST_URI} ^/$
-RewriteRule ^$ /out/index.html [L]
+RewriteRule ^$ /index.html [L]
 
-# Rule 5: Everything else -> /out/index.html (for 404s)
-
+# Rule 5: Fallback to index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^.\*$ /out/index.html [L]
+RewriteRule ^.*$ /index.html [L]
 
-# File type declarations
-
+# File types
 AddType application/javascript .js
 AddType text/css .css
 AddType image/svg+xml .svg
 AddType image/png .png
 AddType image/jpeg .jpg .jpeg
 AddType image/webp .webp
-AddType text/html .html
 
-# Access permissions - Allow everything
-
-<FilesMatch ".\*">
-Require all granted
+# Allow all file access
+<FilesMatch ".*">
+  Require all granted
 </FilesMatch>
 
-# Disable directory browsing
-
+# Disable directory browsing  
 Options -Indexes
 
-# Performance - Cache static files
-
+# Cache control
 <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2)$">
-Header set Cache-Control "max-age=31536000, public, immutable"
+  Header set Cache-Control "max-age=31536000, public"
 </FilesMatch>
 
-# No cache for HTML
-
 <FilesMatch "\.(html)$">
-Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Cache-Control "no-cache, must-revalidate"
 </FilesMatch>

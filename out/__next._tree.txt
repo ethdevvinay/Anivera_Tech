@@ -8,4 +8,4 @@
 :HL["/about-vision.png","image"]
 :HL["/why-choose-metrics.png","image"]
 :HL["/client-philosophy.png","image"]
-0:{"buildId":"mQAAQDrdLPn7zH3ABZvGv","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+0:{"buildId":"FPZI1YmL6WlBMgsqr3DE6","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
