@@ -1,33 +1,68 @@
-# Handle static files efficiently
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
+RewriteEngine On
 
-  # Allow access to _next directory (Fixes 500 error on JS/CSS)
-  RewriteRule ^_next/ - [L]
+# CRITICAL: Stop if already in /out/ folder (prevents redirect loop)
 
-  # Redirect HTML file requests to clean URLs
-  RewriteCond %{THE_REQUEST} \s/([^.]+)\.html [NC]
-  RewriteRule ^ /%1 [NE,L,R=301]
+RewriteCond %{REQUEST_URI} ^/out/
+RewriteRule .\* - [L]
 
-  # Internal rewrite for clean URLs (serve .html without showing extension)
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME}.html -f
-  RewriteRule ^(.*)$ $1.html [L]
+# Rule 1: Direct files - serve from /out/
 
-  # Custom 404 Page (Must point to explicit 404.html)
-  ErrorDocument 404 /404.html
-</IfModule>
+# Example: /logo.png -> /out/logo.png
 
-# Fix MIME Types
+RewriteCond %{DOCUMENT_ROOT}/out%{REQUEST_URI} -f
+RewriteRule ^(.\*)$ /out/$1 [L]
+
+# Rule 2: Routes with trailing slash - /about/ -> /out/about.html
+
+RewriteCond %{REQUEST*URI} ^/([a-zA-Z0-9*-]+)/$
+RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
+RewriteRule ^([a-zA-Z0-9_-]+)/$ /out/$1.html [L]
+
+# Rule 3: Routes without trailing slash - /about -> /out/about.html
+
+RewriteCond %{REQUEST*URI} ^/([a-zA-Z0-9*-]+)$
+RewriteCond %{DOCUMENT_ROOT}/out/%1.html -f
+RewriteRule ^([a-zA-Z0-9_-]+)$ /out/$1.html [L]
+
+# Rule 4: Root homepage - / -> /out/index.html
+
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /out/index.html [L]
+
+# Rule 5: Everything else -> /out/index.html (for 404s)
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.\*$ /out/index.html [L]
+
+# File type declarations
+
 AddType application/javascript .js
 AddType text/css .css
 AddType image/svg+xml .svg
+AddType image/png .png
+AddType image/jpeg .jpg .jpeg
+AddType image/webp .webp
+AddType text/html .html
 
-# Disable directory listing
+# Access permissions - Allow everything
+
+<FilesMatch ".\*">
+Require all granted
+</FilesMatch>
+
+# Disable directory browsing
+
 Options -Indexes
 
-# Set Permissions (Implicitly handles 500 errors in some environments)
-<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg)$">
-    Require all granted
+# Performance - Cache static files
+
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2)$">
+Header set Cache-Control "max-age=31536000, public, immutable"
+</FilesMatch>
+
+# No cache for HTML
+
+<FilesMatch "\.(html)$">
+Header set Cache-Control "no-cache, no-store, must-revalidate"
 </FilesMatch>
